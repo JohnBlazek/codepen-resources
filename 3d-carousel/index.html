@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>3D Carousel Using TweenMax.js & jQuery</title>
+	
+	<!-- CSS
+  ================================================== -->
+	
+	<!-- Prototype-only necessary background elements and such -->
+	<link rel="stylesheet" href="css/stylesheet.css">
+	
+	<style>
+	
+	/* hardware accelatator class */	
+	.trans3d
+	{
+		-webkit-transform-style: preserve-3d;
+		-webkit-transform: translate3d(0, 0, 0);
+		-moz-transform-style: preserve-3d;
+		-moz-transform: translate3d(0, 0, 0);
+		-ms-transform-style:preserve-3d;
+		-ms-transform: translate3d(0, 0, 0);
+		transform-style:preserve-3d;
+		transform: translate3d(0, 0, 0);
+
+		/*-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+		-ms-backface-visibility:hidden;
+		backface-visibility:hidden;*/
+	}
+	
+	#contentContainer
+	{
+		position:absolute;
+		margin-left:-500px;
+		margin-top:-500px;
+		left:50%;
+		top:50%;
+		width:1000px;
+		height:1000px;
+	}
+	
+	#carouselContainer
+	{
+		position:absolute;
+		margin-left:-500px;
+		margin-top:-500px;
+		left:50%;
+		top:50%;
+		width:1000px;
+		height:1000px;
+	}
+	
+	.carouselItem
+	{
+		width:320px;
+		height:130px;
+		position:absolute;
+		background-color:rgba(255, 255, 255, .75);
+		border:10px solid rgba(255, 255, 255, .5);
+		color:aqua;
+		font-size:72px;
+		left:50%;
+		top:50%;
+		margin-left:-160px;
+		margin-top:-90px;
+		text-align:center;
+		padding-top:50px;
+	}
+	
+	</style>
+	
+	<!-- HTML5 Shiv 
+		(not necessary for integration, but if you are using HTML5 
+		 elements (<section>, <article>, etc), a very nice to have)
+  ================================================== -->	
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+	<header>
+		<h1>3D Carousel Using TweenMax.js & jQuery</h1>
+		<h3>A pen by <a href="http://www.twitter.com/johnblazek" target="_blank">@johnblazek</a></h3>
+		<div id="fps">Framerate: 0/60 FPS</div>
+	</header>
+	
+	<div id="contentContainer" class="trans3d"> 
+	<section id="carouselContainer" class="trans3d">
+		<figure id="item1" class="carouselItem trans3d">1</figure>
+		<figure id="item2" class="carouselItem trans3d">2</figure>
+		<figure id="item3" class="carouselItem trans3d">3</figure>
+		<figure id="item4" class="carouselItem trans3d">4</figure>
+		<figure id="item5" class="carouselItem trans3d">5</figure>
+		<figure id="item6" class="carouselItem trans3d">6</figure>
+		<figure id="item7" class="carouselItem trans3d">7</figure>
+		<figure id="item8" class="carouselItem trans3d">8</figure>
+		<figure id="item9" class="carouselItem trans3d">9</figure>
+		<figure id="item10" class="carouselItem trans3d">10</figure>
+		<figure id="item11" class="carouselItem trans3d">11</figure>
+		<figure id="item12" class="carouselItem trans3d">12</figure>	
+	</section>
+	</div>
+	
+	
+	<!-- JS
+  ================================================== -->
+
+	<script src="js/libs.min.js"></script>
+	
+	<script type="text/javascript">
+		
+		var w, container, carousel, item, radius, itemLength, rY, ticker, fps; 
+		var mouseX = 0;
+		var mouseY = 0;
+		var mouseZ = 0;
+		var addX = 0;
+		
+		
+		
+		var fps_counter = {
+			
+			tick: function () 
+			{
+				// this has to clone the array every tick so that
+				// separate instances won't share state 
+				this.times = this.times.concat(+new Date());
+				var seconds, times = this.times;
+        
+				if (times.length > this.span + 1) 
+				{
+					times.shift(); // ditch the oldest time
+					seconds = (times[times.length - 1] - times[0]) / 1000;
+					return Math.round(this.span / seconds);
+				} 
+				else return null;
+        
+    },
+ 
+ 
+    times: [],
+    span: 20
+};
+		var counter = Object.create(fps_counter);
+		$(document).ready( init )
+		
+		function init()
+		{
+			w = $(window);
+			container = $( '#contentContainer' );
+			carousel = $( '#carouselContainer' );
+			item = $( '.carouselItem' );
+			itemLength = $( '.carouselItem' ).length;
+			fps = $('#fps');
+			rY = 360 / itemLength;
+			radius = Math.round( (250) / Math.tan( Math.PI / itemLength ) );
+			
+			TweenMax.set(container, {perspective:600})
+			TweenMax.set(carousel, {z:-(radius)})
+			
+			
+			for ( var i = 0; i < itemLength; i++ )
+			{
+				item.eq(i).css({ '-webkit-transform':'rotateY( '+ (rY * i) +'deg ) translateZ( '+ radius +'px )' });
+				item.eq(i).css({ '-moz-transform':'rotateY( '+ (rY * i) +'deg ) translateZ( '+ radius +'px )' });
+				item.eq(i).css({ '-ms-transform':'rotateY( '+ (rY * i) +'deg ) translateZ( '+ radius +'px )' });
+				item.eq(i).css({ '-o-transform':'rotateY( '+ (rY * i) +'deg ) translateZ( '+ radius +'px )' });
+				item.eq(i).css({ 'transform':'rotateY( '+ (rY * i) +'deg ) translateZ( '+ radius +'px )' });
+								
+			}
+			
+			window.addEventListener( "mousemove", onMouseMove, false );
+			ticker = setInterval( looper, 1000/60 );
+						
+		}
+		
+		onMouseMove = function(event)
+		{
+			mouseX = -(-(window.innerWidth * .5) + event.pageX) * .0025;
+			mouseY = -(-(window.innerHeight * .5) + event.pageY ) * .01;
+			mouseZ = -(radius) - (Math.abs(-(window.innerHeight * .5) + event.pageY ) - 200);
+		}
+		
+		looper = function()
+		{
+			addX += mouseX
+			TweenMax.to( carousel, 1, { rotationY:addX, rotationX:mouseY, ease:Quint.easeOut } )
+			TweenMax.set( carousel, {z:mouseZ } )
+			fps.text( 'Framerate: ' + counter.tick() + '/60 FPS' )	
+		}
+		
+	
+		
+		
+		
+		
+	
+	</script>
+	
+	<!-- END JS
+  ================================================== -->
+	
+</body>
+</html>

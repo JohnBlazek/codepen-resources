@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>3D Carousel Using TweenMax.js & jQuery</title>
+	
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	
+	<!-- CSS
+  ================================================== -->
+	
+	<!-- Prototype-only necessary background elements and such -->
+	<link rel="stylesheet" href="css/stylesheet.css">
+	
+	<style>
+	
+	/* hardware accelatator class */	
+	.trans3d
+	{
+		-webkit-transform-style: preserve-3d;
+		-webkit-transform: translate3d(0, 0, 0);
+		-moz-transform-style: preserve-3d;
+		-moz-transform: translate3d(0, 0, 0);
+		-ms-transform-style:preserve-3d;
+		-ms-transform: translate3d(0, 0, 0);
+		transform-style:preserve-3d;
+		transform: translate3d(0, 0, 0);
+
+		/*-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+		-ms-backface-visibility:hidden;
+		backface-visibility:hidden;*/
+	}
+	
+	#contentContainer
+	{
+		position:relative;
+		
+		width:100%;
+		height:1000px;
+		overflow:hidden;
+	}
+	
+	#itemHolder
+	{
+		position:relative;
+		
+		width:100%;
+		height:100%;
+		
+	}
+	
+	/*#carouselContainer
+	{
+		position:absolute;
+		margin-left:-500px;
+		margin-top:-500px;
+		left:50%;
+		top:50%;
+		width:1000px;
+		height:1000px;
+	}
+	*/
+	.item
+	{
+		width:25%;
+		height:25%;
+		position:relative;
+		float:left;
+		
+		visibility: hidden;
+		display:table;
+		
+	}
+	
+	.itemInner, .detailInner
+	{
+		width:96%;
+		height:96%;
+		position:absolute;
+		
+		text-align:center;
+		font-size:24px;
+		margin:2%;
+		vertical-align: middle;
+		display: table-cell;
+		
+	}
+	
+	#detail
+	{
+		width:25%;
+		height:25%;
+		position:absolute;
+		left:0;
+		top:0;
+		
+		z-index:1;
+		display:none;
+		overflow: hidden;
+		
+	}
+	
+	.layout
+	{
+		width:100%;
+		display:none;
+		visibility: hidden;
+		opacity:0;
+	}
+	
+	#full-image
+	{
+		background-image:url('images/mountain.jpg');
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center center;
+		height:100%;
+	}
+	
+	#full-text, #image-and-text
+	{
+		overflow:scroll;
+		-webkit-overflow-scrolling: touch;
+		height:100%;
+	}
+	
+	#image-and-text #headerImage
+	{
+		width:100%;
+		height:400px;
+		position:relative;
+		background-image:url('images/mountain.jpg');
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center center;
+		
+		text-align:left;
+		margin:0 auto;
+		
+	}
+	
+	#full-text #content, #image-and-text #content
+	{
+		width:100%;
+		max-width:960px;
+		position:relative;
+		
+		
+		text-align:left;
+		margin:0 auto;
+		
+	}
+	
+	#full-text #content h1
+	{
+		margin-top:100px;
+		margin-left:0;
+		padding:10px;
+	}
+	
+	#image-and-text #content h1
+	{
+		margin-top:50px;
+		margin-left:0;
+		padding:10px;
+	}
+	#full-text #content p, #image-and-text #content p
+	{
+		margin-top:20px;
+		line-height:1.25em;
+		padding:10px;
+	}
+	
+	#full-text #content p:last-child, #image-and-text #content p:last-child
+	{
+		margin-bottom:50px;
+	}	
+	
+	</style>
+	
+	<!-- HTML5 Shiv 
+		(not necessary for integration, but if you are using HTML5 
+		 elements (<section>, <article>, etc), a very nice to have)
+  ================================================== -->	
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+	<!--<header>
+		<h1>3D Carousel Using TweenMax.js & jQuery</h1>
+		<h3>A pen by <a href="http://www.twitter.com/johnblazek" target="_blank">@johnblazek</a></h3>
+		<div id="fps">Framerate: 0/60 FPS</div>
+	</header>-->
+	
+	<div id="contentContainer" class="trans3d"> 
+		
+		<div id="detail" class="trans3d">
+			<div class="detailInner trans3d">
+				<div class="layout trans3d" id="full-image"></div>
+				<div class="layout trans3d" id="image-and-text">
+					<div id="headerImage"></div>
+					<div id="content">
+					<h1>The following is an example Blog Post</h1>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porta magna sodales diam dapibus, quis lacinia dui lobortis. Pellentesque quis tincidunt augue. Vestibulum suscipit consequat sapien. Proin malesuada dignissim imperdiet. Quisque in ligula rhoncus, rhoncus sapien id, consectetur odio. Donec et metus at tortor commodo iaculis. Morbi eget leo felis. Mauris pulvinar ornare tellus, at cursus diam varius ut. Morbi suscipit lacinia dui sed euismod. Quisque malesuada sagittis sodales. Cras quis erat posuere, condimentum dui vel, accumsan tellus. Vestibulum vehicula quam urna, bibendum euismod sapien rhoncus sit amet. Maecenas vestibulum justo eget leo rhoncus auctor.</p>
+
+<p>Phasellus nisl turpis, viverra non enim ac, commodo vehicula nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam vitae tortor purus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam felis neque, faucibus quis magna at, elementum vestibulum nulla. Donec tincidunt nisi nunc. Maecenas ullamcorper eros mauris, non interdum eros fermentum eget. Pellentesque a massa vel tellus varius malesuada. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut sit amet elit vel lectus condimentum malesuada quis at enim. In pulvinar nisl a erat dignissim aliquet et et arcu. Morbi nunc orci, ultrices luctus sodales ut, auctor vitae mi. Morbi elementum viverra ultricies.</p>
+
+<p>Pellentesque velit eros, ultricies sed lacinia vel, varius in tortor. Donec dictum ligula dictum ligula facilisis vehicula sit amet sit amet sapien. Morbi eget nulla non elit hendrerit blandit eget a metus. Integer vehicula nisi nibh, a tincidunt mi consectetur ut. Suspendisse venenatis ultricies nibh, sed varius purus tristique eget. Nullam aliquam eget velit ut pellentesque. Donec porta elit nec dignissim bibendum. Quisque a dolor in orci commodo pellentesque. Cras semper, lectus eget mattis porttitor, nisl metus consequat ligula, sit amet mattis sem sapien eget nibh. Nunc nisl nibh, aliquet vitae elit vel, placerat pretium nisl. Pellentesque adipiscing aliquet iaculis. Quisque vitae dictum sapien, eget pellentesque urna. Morbi ut congue ipsum, sed porta lacus. Nam pretium neque a diam pulvinar fringilla.</p>
+<p>Pellentesque auctor consectetur velit, laoreet sagittis orci faucibus quis. Pellentesque sed mi erat. Nulla imperdiet, dui sit amet vestibulum tincidunt, ligula massa bibendum magna, eget pretium neque dui id nulla. Suspendisse facilisis ullamcorper orci sit amet iaculis. Phasellus id nisi nisl. Nam accumsan felis diam, eu imperdiet nulla ornare non. Mauris posuere malesuada est vitae feugiat. Vivamus nec urna nec quam auctor venenatis. Nunc vehicula lorem non sapien tincidunt tristique. Donec id tempus ipsum. Proin id porttitor metus.</p>
+<p>Mauris laoreet lorem sit amet lorem dignissim ultricies. Integer venenatis, erat ut tempor cursus, lacus sapien vehicula erat, vel vestibulum neque felis sit amet ante. Vivamus tellus libero, iaculis non hendrerit id, lacinia bibendum diam. In elit ligula, venenatis quis semper eget, pretium quis est. Aliquam eget leo semper, luctus tellus vitae, pellentesque dui. Pellentesque placerat neque in justo facilisis semper. Fusce turpis dui, malesuada ut mi ac, ultrices scelerisque justo. In at tellus lacus. Morbi elit mi, auctor hendrerit accumsan eu, condimentum et neque. Donec malesuada, nunc a commodo gravida, tortor purus lobortis turpis, at mollis arcu ligula ac massa. Donec ultricies, odio eu porttitor gravida, tellus diam viverra felis, non tincidunt dui felis sed ligula. Praesent eu purus quam. Maecenas adipiscing dictum ligula. Vivamus volutpat id erat non placerat. Sed id urna eu justo fringilla mollis sed convallis tellus.</p>
+					</div>
+				</div>
+				<div class="layout trans3d" id="full-text">
+					<div id="content">
+					<h1>The following is an example Blog Post</h1>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porta magna sodales diam dapibus, quis lacinia dui lobortis. Pellentesque quis tincidunt augue. Vestibulum suscipit consequat sapien. Proin malesuada dignissim imperdiet. Quisque in ligula rhoncus, rhoncus sapien id, consectetur odio. Donec et metus at tortor commodo iaculis. Morbi eget leo felis. Mauris pulvinar ornare tellus, at cursus diam varius ut. Morbi suscipit lacinia dui sed euismod. Quisque malesuada sagittis sodales. Cras quis erat posuere, condimentum dui vel, accumsan tellus. Vestibulum vehicula quam urna, bibendum euismod sapien rhoncus sit amet. Maecenas vestibulum justo eget leo rhoncus auctor.</p>
+
+<p>Phasellus nisl turpis, viverra non enim ac, commodo vehicula nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam vitae tortor purus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam felis neque, faucibus quis magna at, elementum vestibulum nulla. Donec tincidunt nisi nunc. Maecenas ullamcorper eros mauris, non interdum eros fermentum eget. Pellentesque a massa vel tellus varius malesuada. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut sit amet elit vel lectus condimentum malesuada quis at enim. In pulvinar nisl a erat dignissim aliquet et et arcu. Morbi nunc orci, ultrices luctus sodales ut, auctor vitae mi. Morbi elementum viverra ultricies.</p>
+
+<p>Pellentesque velit eros, ultricies sed lacinia vel, varius in tortor. Donec dictum ligula dictum ligula facilisis vehicula sit amet sit amet sapien. Morbi eget nulla non elit hendrerit blandit eget a metus. Integer vehicula nisi nibh, a tincidunt mi consectetur ut. Suspendisse venenatis ultricies nibh, sed varius purus tristique eget. Nullam aliquam eget velit ut pellentesque. Donec porta elit nec dignissim bibendum. Quisque a dolor in orci commodo pellentesque. Cras semper, lectus eget mattis porttitor, nisl metus consequat ligula, sit amet mattis sem sapien eget nibh. Nunc nisl nibh, aliquet vitae elit vel, placerat pretium nisl. Pellentesque adipiscing aliquet iaculis. Quisque vitae dictum sapien, eget pellentesque urna. Morbi ut congue ipsum, sed porta lacus. Nam pretium neque a diam pulvinar fringilla.</p>
+<p>Pellentesque auctor consectetur velit, laoreet sagittis orci faucibus quis. Pellentesque sed mi erat. Nulla imperdiet, dui sit amet vestibulum tincidunt, ligula massa bibendum magna, eget pretium neque dui id nulla. Suspendisse facilisis ullamcorper orci sit amet iaculis. Phasellus id nisi nisl. Nam accumsan felis diam, eu imperdiet nulla ornare non. Mauris posuere malesuada est vitae feugiat. Vivamus nec urna nec quam auctor venenatis. Nunc vehicula lorem non sapien tincidunt tristique. Donec id tempus ipsum. Proin id porttitor metus.</p>
+<p>Mauris laoreet lorem sit amet lorem dignissim ultricies. Integer venenatis, erat ut tempor cursus, lacus sapien vehicula erat, vel vestibulum neque felis sit amet ante. Vivamus tellus libero, iaculis non hendrerit id, lacinia bibendum diam. In elit ligula, venenatis quis semper eget, pretium quis est. Aliquam eget leo semper, luctus tellus vitae, pellentesque dui. Pellentesque placerat neque in justo facilisis semper. Fusce turpis dui, malesuada ut mi ac, ultrices scelerisque justo. In at tellus lacus. Morbi elit mi, auctor hendrerit accumsan eu, condimentum et neque. Donec malesuada, nunc a commodo gravida, tortor purus lobortis turpis, at mollis arcu ligula ac massa. Donec ultricies, odio eu porttitor gravida, tellus diam viverra felis, non tincidunt dui felis sed ligula. Praesent eu purus quam. Maecenas adipiscing dictum ligula. Vivamus volutpat id erat non placerat. Sed id urna eu justo fringilla mollis sed convallis tellus.</p>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<div id="itemHolder" class="trans3d">
+			<figure id="item0" class="item trans3d" ><div class="itemInner trans3d">1</div></figure>
+			<figure id="item1" class="item trans3d" ><div class="itemInner trans3d">2</div></figure>
+			<figure id="item2" class="item trans3d" ><div class="itemInner trans3d">3</div></figure>
+			<figure id="item3" class="item trans3d" ><div class="itemInner trans3d">4</div></figure>
+			<figure id="item4" class="item trans3d" ><div class="itemInner trans3d">5</div></figure>
+			<figure id="item5" class="item trans3d" ><div class="itemInner trans3d">6</div></figure>
+			<figure id="item6" class="item trans3d" ><div class="itemInner trans3d">7</div></figure>
+			<figure id="item7" class="item trans3d" ><div class="itemInner trans3d">8</div></figure>
+			<figure id="item8" class="item trans3d" ><div class="itemInner trans3d">9</div></figure>
+			<figure id="item9" class="item trans3d" ><div class="itemInner trans3d">10</div></figure>
+			<figure id="item10" class="item trans3d" ><div class="itemInner trans3d">11</div></figure>
+			<figure id="item11" class="item trans3d" ><div class="itemInner trans3d">12</div></figure>
+			<figure id="item12" class="item trans3d" ><div class="itemInner trans3d">13</div></figure>
+			<figure id="item13" class="item trans3d" ><div class="itemInner trans3d">14</div></figure>
+			<figure id="item14" class="item trans3d" ><div class="itemInner trans3d">15</div></figure>
+			<figure id="item15" class="item trans3d" ><div class="itemInner trans3d">16</div></figure>	
+		</div>
+	</div>
+	
+	
+	<!-- JS
+  ================================================== -->
+
+	<script src="js/libs.min.js"></script>
+	
+	<script type="text/javascript">
+		
+		var colorArrayHex = ['#00627F', '#4CD6FF', '#00C5FF', '#376F7F', '#009DCC']
+		var colorArrayRGBA = [ '0,98,127,.75', '76, 214, 255, .75', '0,197, 255, .75', '55,111,127,.75', '0,157,294,.75' ];
+		var order = [6,7,10,11,14,15,2,3,5,8,9,12,13,16,1,4];
+		var layouts = [ '#full-image', '#image-and-text', '#full-text' ];
+		var _layoutDelay = .5;
+		// set and cache variables
+		// set and cache variables
+		var _layout;
+		var w, container, itemHolder, item, id, itemLength, rY, detail, fps; 
+		var _x;
+		var _y;
+		/*var mouseX = 0;
+		var mouseY = 0;
+		var mouseZ = 0;
+		var addX = 0;
+		
+		
+		// fps counter created by: https://gist.github.com/sharkbrainguy/1156092,
+		// no need to create my own :)
+		var fps_counter = {
+			
+			tick: function () 
+			{
+				// this has to clone the array every tick so that
+				// separate instances won't share state 
+				this.times = this.times.concat(+new Date());
+				var seconds, times = this.times;
+        
+				if (times.length > this.span + 1) 
+				{
+					times.shift(); // ditch the oldest time
+					seconds = (times[times.length - 1] - times[0]) / 1000;
+					return Math.round(this.span / seconds);
+				} 
+				else return null;
+			},
+ 
+			times: [],
+			span: 20
+		};
+		var counter = Object.create(fps_counter);
+		
+		
+		*/
+		$(document).ready( init )
+		
+		function init()
+		{
+			w = $(window);
+			container = $( '#contentContainer' );
+			itemHolder = $('#itemHolder');
+			item = $( '.item' );
+			itemLength = $( '.item' ).length;
+			fps = $('#fps');
+			detail = $('#detail');
+			id = -1;
+						
+			// set container 3d props
+			TweenMax.set(container, {perspective:600})
+			
+			
+			item.hammer().on('tap', displayDetail )
+			detail.hammer().on('tap', hideDetail )
+			// create carousel item props
+			var $colorCount = 0;
+			for ( var i = 0; i < itemLength; i++ )
+			{
+				var $item = item.eq(order[i]-1);
+				//console.log(order[i])
+				TweenMax.set($item, {z:2500})
+				TweenMax.set( $item.find('.itemInner'), {backgroundColor:'rgba('+colorArrayRGBA[$colorCount]+')'})
+				
+				$colorCount++
+				if ( $colorCount == 5 ) $colorCount = 0;
+								
+				animateIn( $item, i * .03 )						
+			}
+			w.resize( resizer );
+			resizer()
+			// set mouse x and y props and looper ticker
+		//	window.addEventListener( "mousemove", onMouseMove, false );
+		//	ticker = setInterval( looper, 1000/60 );			
+		}
+		
+		function resizer()
+		{
+			container.css({'height':w.height()});
+			//$('html, body').css({'height':w.height()});
+			$('#headerImage').css({'height':w.height()*.75});
+			
+			/*if ( id != -1 )
+			{
+				_x = $('#item'+id).offset().left;
+				_y = $('#item'+id).offset().top;
+				
+				var $x = (w.width() * .5) - ($('#item'+id).offset().left) - ( $('#item'+id).width() *.5 )
+				var $y = (w.height()* .5) - ($('#item'+id).offset().top) - ( $('#item'+id).height() *.5 )
+			
+			
+			
+			TweenMax.set( itemHolder, {x:$x * 5, y:$y * 5})
+			}*/
+		}
+		
+		function animateIn( $item, $n )
+		{
+			
+			var $d = 1 + (getRandomInt( 8 ) * .1)
+			
+			TweenMax.set( $item, { autoAlpha:1, delay:$n } )	
+			TweenMax.to($item, 1.5, {z:0, ease:Quint.easeOut, delay:$n});
+		}
+		
+		function displayDetail(e)
+		{
+			//alert($(this).offset().left +  + $(this).offset().top)
+			
+			id = $(this).attr('id').substr(4, 2)
+			
+			var $x = (w.width() * .5) - ($(this).offset().left) - ( $(this).width() *.5 )
+			var $y = (w.height()* .5) - ($(this).offset().top) - ( $(this).height() *.5 )
+			
+			_x = $(this).offset().left;
+			_y = $(this).offset().top;
+			
+			TweenMax.to( itemHolder, .5, {z:2500, x:$x * 5, y:$y * 5, ease:Expo.easeIn})
+			
+			TweenMax.set( detail.find('.detailInner'), { width:'96%', 'height':'96%', margin:'2%', backgroundColor:$(this).find('.itemInner').css('backgroundColor') } );
+			
+			TweenMax.set( detail, { autoAlpha:1, width:'25%', 'height':'25%', transformOrigin:'center center', z:0, x:_x, y:_y, display:'block'  } )
+			TweenMax.to( detail.find('.detailInner'), .5, { width:'100%', 'height':'100%', margin:0, ease:Quint.easeIn } );
+			TweenMax.to( detail, .5, { x:0, y:0, ease:Quint.easeIn, width:'100%', 'height':'100%'  } )
+			
+			$(this).css({'visibility':'hidden'})
+			
+			var $r = getRandomInt(3)-1;
+			
+			_layout = $( layouts[$r] );
+			if ($r == 0) _layoutDelay = 0; 
+			else _layoutDelay = .5;
+			
+			_layout.css('display', 'block');
+			TweenMax.set( _layout, {autoAlpha:0, overwrite:true } )
+			TweenMax.to( _layout, .5, { autoAlpha:1, delay:_layoutDelay, ease:Quint.easeInOut } );
+			
+		}
+		
+		function hideDetail(e)
+		{
+			item.css({'visibility':'visible'})
+			TweenMax.to( detail, 1, { delay:.25, x:_x + ( item.width() *.5 ) , y:_y + ( item.height() *.5 ), ease:Quint.easeOut, width:'0%', height:'0%' } )
+			TweenMax.to( detail, .5, { delay:.5, autoAlpha:0, ease:Quint.easeOut } )
+			
+			TweenMax.to( itemHolder, 1.25, {z:0, x:0, y:0, ease:Quint.easeOut})
+			
+			var $reverse = 0;
+			if (_layoutDelay == 0) $reverse = .5;
+			TweenMax.to( _layout, .5, { autoAlpha:0, display:'none', ease:Quint.easeOut , delay:$reverse } );
+			
+		}
+		
+		/*
+		function onMouseMove(event)
+		{
+			mouseX = -(-(window.innerWidth * .5) + event.pageX) * .0025;
+			mouseY = -(-(window.innerHeight * .5) + event.pageY ) * .01;
+			mouseZ = -(radius) - (Math.abs(-(window.innerHeight * .5) + event.pageY ) - 200);
+		}
+		
+		// loops and sets the carousel 3d properties
+		function looper()
+		{
+			addX += mouseX
+			TweenMax.to( carousel, 1, { rotationY:addX, rotationX:mouseY, ease:Quint.easeOut } )
+			TweenMax.set( carousel, {z:mouseZ } )
+			fps.text( 'Framerate: ' + counter.tick() + '/60 FPS' )	
+		}
+		*/
+		function getRandomInt( $n )
+		{
+			return Math.floor((Math.random()*$n)+1);	
+		}		
+		
+		
+	
+	</script>
+	
+	<!-- END JS
+  ================================================== -->
+	
+</body>
+</html>

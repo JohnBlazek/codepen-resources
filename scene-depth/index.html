@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>3D Carousel Using TweenMax.js & jQuery</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui"/>
+	<!-- CSS
+  ================================================== -->
+	
+	<!-- Prototype-only necessary background elements and such -->
+	
+	
+	<style>
+	
+    /* #Reset & Basics (Inspired by E. Meyers)
+================================================== */
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline; }
+	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+		display: block; }
+	body {
+		line-height: 1; }
+	ol, ul {
+		list-style: none; }
+	blockquote, q {
+		quotes: none; }
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content: '';
+		content: none; }
+	table {
+		border-collapse: collapse;
+		border-spacing: 0; 
+    }
+        
+    body, html
+    {
+        width:100%;
+        height:100%;
+        min-height:690px;
+        min-width:768px;
+        overflow:hidden;
+        background:black;
+    }
+        
+	/* hardware accelatator class */	
+	.trans3d
+	{
+		-webkit-transform-style: preserve-3d;
+		-webkit-transform: translate3d(0, 0, 0);
+		-moz-transform-style: preserve-3d;
+		-moz-transform: translate3d(0, 0, 0);
+		-ms-transform-style:preserve-3d;
+		-ms-transform: translate3d(0, 0, 0);
+		transform-style:preserve-3d;
+		transform: translate3d(0, 0, 0);
+
+		-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+		-ms-backface-visibility:hidden;
+		backface-visibility:hidden;
+	}
+	
+	#contentContainer
+	{
+		overflow:hidden;		
+		width:100%;
+		height:100%;        
+        -webkit-perspective: 600px; /* Chrome, Safari, Opera */
+        -moz-perspective: 600px;
+        perspective: 600px; 
+	}
+	
+	.scene-container
+	{
+		position:absolute;		
+		width:100%;
+		height:100%;
+        overflow:hidden;
+        -webkit-perspective: 600px; /* Chrome, Safari, Opera */
+        -moz-perspective: 600px;
+        perspective: 600px;       
+	}
+        
+    #scene-1
+    {
+         visibility:hidden;   
+    } 
+    
+    #scene-1 .fore-container
+    {
+         width:1600px;
+         height:836px;
+         margin-left:-800px;
+         margin-top:-318px;
+    } 
+        
+    #scene-1 .logo-container
+    {
+        /*background-image: url(images/logo.png);*/
+        width:768px;
+        height:323px;
+        margin-left:-384px;
+        margin-top: -423px;
+        position:absolute;
+        top:50%;
+        left:50%;
+        z-index:2;
+    }     
+        
+    #scene-2
+    {
+         visibility:hidden;   
+    }
+        
+    #scene-2 .bkg-container
+    {
+         /*background-image: url(images/collageBkg-2.jpg);*/   
+    }
+        
+    #scene-2 .fore-container
+    {
+         /*background-image: url(images/collageFore-2-2x.png); */ 
+         width:557px;
+         height:821px;
+        background-size:557px 821px;
+        
+         margin-left:-278px;
+         margin-top:-306px;
+    
+    }
+    
+    .bkgSrc{ position:absolute; width:3000px; height:2140px;}
+        
+    .bkg-container
+    {
+        width:3000px;
+        height:2140px;
+        margin-left:-1500px;
+        margin-top:-1070px;
+        left:50%;
+        top:50%;
+        position:absolute;
+        overflow:hidden;
+        display:block;
+        z-index:0;
+        
+    }
+        
+    .grit-container
+    {
+        width:1024px;
+        height:548px;
+        background-size:1024px 5480px;
+        position:absolute;
+        margin-left:-512px;
+        margin-top:-272px;
+        overflow:hidden;
+        left:50%;
+        top:50%;
+        
+        display:none;
+        background-image:url(images/filmdust-Sprite.png);
+        z-index:1;
+    }
+        
+    .fore-container
+    { 
+        left:50%;
+        top:50%;
+       /* overflow:hidden;*/
+        position:absolute;
+        z-index:3;
+        display:block;
+    }    
+	
+	.carouselItem
+	{
+		width:320px;
+		height:130px;
+		position:absolute;
+		left:50%;
+		top:50%;
+		margin-left:-160px;
+		margin-top:-90px;
+		
+	}
+	
+	.carouselItemInner
+	{
+		width:320px;
+		height:130px;
+		position:absolute;
+		background-color:rgba(255, 255, 255, .75);
+		border:10px solid rgba(255, 255, 255, .5);
+		color:aqua;
+		font-size:72px;
+		left:50%;
+		top:50%;
+		margin-left:-160px;
+		margin-top:-90px;
+		text-align:center;
+		padding-top:50px;
+		
+	}
+	
+	</style>
+	
+	<!-- HTML5 Shiv 
+		(not necessary for integration, but if you are using HTML5 
+		 elements (<section>, <article>, etc), a very nice to have)
+  ================================================== -->	
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+	
+	<div class="accel" style="position:absolute; bottom:0; z-index:1000; color:white;">X, Y</div>
+	<div id="contentContainer" class="trans3d"> 
+	    <section id="scene-1" class="scene-container trans3d">
+		             
+                <figure class="fore-container trans3d"><img src="images/nature-sky-sunset-man-sm.png" class="foreSrc trans3d"></figure>
+                <figure class="grit-container trans3d"></figure>
+                
+		        <figure class="bkg-container trans3d"><img src="images/background.jpg" class="bkgSrc trans3d"></figure>
+            
+	    </section>
+	    
+	</div>
+	
+	
+	<!-- JS
+  ================================================== -->
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/plugins/BezierPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fpsmeter/0.3.1/fpsmeter.min.js"></script>
+	
+	<script type="text/javascript">
+		
+		// set and cache variables
+		// set and cache variables
+		var w, container, scene, item, radius, itemLength, rY, ticker, fps, bkg; 
+		var mouseX = 0;
+		var mouseY = 0;
+		var mouseZ = 0;
+		var addX = 0;
+        var meter = new FPSMeter({ theme: 'colorful', graph:1, heat:1 });
+		
+        var gui = new dat.GUI();
+        var scene = new Scene();
+		document.addEventListener('touchmove', function (e) { e.preventDefault();  }, false);
+		$(document).ready( init )
+		
+        function init()
+        {
+            w = $(window);
+            container = $( '#contentContainer' );
+            
+            scene.init();
+        }
+        
+        function Scene()
+        {
+            this.scene, this.bkg, this.fore, this.grit, this.logo, this.logoSrc, this.bkgSrc, this.gritSrc, this.foreSrc;
+            this.sceneNum = 1;
+            this.transitionTimeIn = 3.5;
+            this.transitionTimeOut = 1;
+            this.fadeTimeIn = 2.5;
+            this.fadeTimeOut = 1;
+            this.zoomStart = 1000;
+            this.useFilters = true;
+            this.animationOption = 'zoomOut';
+            this.foreDrift = .02;
+            this.bkgDrift = .01;
+            this.driftLag = 5;
+            this.grit;
+            this.cameraMovement = 30;
+            this.cameraJitters = 150;
+            this.loopTheGrit = true;
+            this.enableGrit = true;
+            this.enableCamera = true;
+            var _nextSceneFunc, _prevSceneFunc;
+            var _self = this;
+            var _driftX,_driftY,_sceneX,_sceneY,_sceneZ,_sceneRY,_sceneRX,_sceneBlur,_gritCount = 0;
+            var _delayLag = false;
+            this.bkgZ = -1000;
+            this.gritZ = -30;
+            this.logoZ = -60;
+            this.foregroundZ = 0;
+            
+            
+            this.init = function()
+            {                
+                this.scene = $( '.scene-container' );
+                this.bkg = $('.bkg-container');
+                this.fore = $( '.fore-container' );
+                this.scene = $('#scene-1');
+                this.fireInitialTrans()
+               
+                if (!getDevice())window.addEventListener('mousemove', _setParaValues, false)
+                else window.addEventListener( "devicemotion", _setAccelValues, false );
+                
+                _setRandomValue(_sceneX, 'x');
+                _setRandomValue(_sceneY, 'y');
+                _setRandomValue(_sceneZ, 'z');
+                //_setRandomValue( _sceneBlur, 'blur' );
+                //_setRandomValue(_sceneRX, 'rx')
+               // _setRandomValue(_sceneRY, 'ry')
+                
+                _ticker()
+            };
+            
+            this.fireInitialTrans = function()
+            {
+                
+                _self.bkg = _self.scene.find('.bkg-container');
+                _self.fore = _self.scene.find('.fore-container');
+                _self.grit = _self.scene.find('.grit-container');
+                _self.logo = _self.scene.find('.logo-container');
+                
+                _self.foreSrc = _self.fore.find('.foreSrc');
+                _self.bkgSrc = _self.bkg.find('.bkgSrc');
+                _self.logoSrc = _self.logo.find('.logoSrc');
+                
+                
+                _self.loopTheGrit = true;
+                _self.loopGrit();
+                
+                _self.scene.css({'visibility':'visible'})
+                
+                _delayLag = true;
+                
+                TweenMax.set( _self.bkg, { z:0, rotationX:0, rotationY:0, x:0, y:0 } );
+                TweenMax.set( _self.fore, { z:0, rotationX:0, rotationY:0, x:0, y:0 } );
+                TweenMax.set( _self.grit, { z:0, rotationX:0, rotationY:0, x:0, y:0 } );
+               TweenMax.set( _self.logo, { z:0, rotationX:0, rotationY:0, x:0, y:0 } );
+                
+                if ( _self.animationOption == 'zoomOut' )
+                {
+                   
+                    TweenMax.set( _self.bkg, { z:1000 } );                    
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { z:_self.bkgZ, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.grit, { z:1250 } );                    
+                    TweenMax.to( _self.grit, _self.transitionTimeIn, { z:_self.gritZ, delay:.15, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.logo, { z:1500 } );                    
+                    TweenMax.to( _self.logo, _self.transitionTimeIn, { z:_self.logoZ, delay:.15, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { z:1750 } );                    
+                    TweenMax.to( _self.fore, _self.transitionTimeIn, { z:_self.foregroundZ, delay:.25, ease:Quint.easeOut, onComplete:_startLag } );
+                }
+                else if ( _self.animationOption == 'zoomIn' )
+                {
+                    TweenMax.set( _self.bkg, { z:-3050 } );
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { z:_self.bkgZ, delay:.25, ease:Quint.easeOut, onComplete:_startLag } );
+                     TweenMax.set( _self.logo, { z:-1500 } );                    
+                    TweenMax.to( _self.logo, _self.transitionTimeIn, { z:_self.logoZ, delay:.15, ease:Quint.easeOut } );
+
+                    TweenMax.set( _self.fore, { z:-2000} );
+                    TweenMax.to( _self.fore, _self.transitionTimeIn, { z:_self.gritZ, delay:.15, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { z:-1000} );
+                    TweenMax.to( _self.fore, _self.transitionTimeIn, { z:_self.foregroundZ,  ease:Quint.easeOut } );
+                }
+                else if (_self.animationOption == 'horizontal3D')
+                {
+                    TweenMax.set( _self.bkg, { rotationY:-90, x:-2950, z:-2050 } );
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { bezier:{values:[ { rotationY:0, x:0, z:_self.bkgZ }]},   ease:Quint.easeOut, onComplete:_startLag } );
+                    
+                    TweenMax.set( _self.grit, { rotationY:-90, x:-3000, z:-1550 } );
+                    TweenMax.to( _self.grit, _self.transitionTimeIn, { bezier:{values:[{ rotationY:0, x:0, z:_self.gritZ }]}, delay:.15,  ease:Quint.easeOut } );
+                   
+                     TweenMax.set( _self.logo, { rotationY:-90, x:-3050, z:-1050 } );
+                   TweenMax.to( _self.logo, _self.transitionTimeIn, { bezier:{values:[ { rotationY:0, x:0, z:_self.logoZ }]}, delay:.25,  ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { rotationY:-90, x:-3050, z:-1050 } );
+                   TweenMax.to( _self.fore, _self.transitionTimeIn, { bezier:{values:[ { rotationY:0, x:0, z:_self.foregroundZ }]}, delay:.25,  ease:Quint.easeOut } );
+                     
+                }
+                else if (_self.animationOption == 'vertical3D')
+                {
+                   TweenMax.set( _self.bkg, { rotationX:-90, y:1950, z:-2050 } );
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { bezier:{values:[ { rotationX:0, y:0, z:_self.bkgZ }]},   ease:Quint.easeOut, onComplete:_startLag } );
+                    
+                    TweenMax.set( _self.grit, { rotationX:-90, y:2000, z:-1550 } );
+                    TweenMax.to( _self.grit, _self.transitionTimeIn, { bezier:{values:[{ rotationX:0, y:0, z:_self.gritZ }]}, delay:.15,  ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.logo, { rotationX:-90, y:2050, z:-1050 } );
+                   TweenMax.to( _self.logo, _self.transitionTimeIn, { bezier:{values:[ { rotationX:0, y:0, z:_self.logoZ }]}, delay:.2,  ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { rotationX:-90, y:2050, z:-1050 } );
+                   TweenMax.to( _self.fore, _self.transitionTimeIn, { bezier:{values:[ { rotationX:0, y:0, z:_self.foregroundZ }]}, delay:.25,  ease:Quint.easeOut } );
+                }
+                else if (_self.animationOption == 'horizontal2D')
+                {
+                    TweenMax.set( _self.bkg, { x:-w.width(), z:_self.bkgZ } );
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { x:0, ease:Quint.easeOut, onComplete:_startLag } );
+
+                    TweenMax.set( _self.grit, { x:-w.width(), z:_self.gritZ  } );
+                    TweenMax.to( _self.grit, _self.transitionTimeIn, { delay:.15, x:0, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.logo, { x:-w.width(), z:_self.logoZ  } );
+                    TweenMax.to( _self.logo, _self.transitionTimeIn, { delay:.2, x:0, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { x:-w.width(), z:_self.foregroundZ  } );
+                    TweenMax.to( _self.fore, _self.transitionTimeIn, { delay:.25, x:0, ease:Quint.easeOut } );
+                }
+                else if (_self.animationOption == 'vertical2D')
+                {
+                    TweenMax.set( _self.bkg, { y:w.height(), z:_self.bkgZ } );
+                    TweenMax.to( _self.bkg, _self.transitionTimeIn, { y:0, ease:Quint.easeOut, onComplete:_startLag } );
+
+                    TweenMax.set( _self.grit, { y:w.height(), z:_self.gritZ  } );
+                    TweenMax.to( _self.grit, _self.transitionTimeIn, { delay:.15, y:0, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.logo, { y:w.height(), z:_self.logoZ  } );
+                    TweenMax.to( _self.logo, _self.transitionTimeIn, { delay:.15, y:0, ease:Quint.easeOut } );
+                    
+                    TweenMax.set( _self.fore, { y:w.height(), z:_self.foregroundZ  } );
+                    TweenMax.to( _self.fore, _self.transitionTimeIn, { delay:.25, y:0, ease:Quint.easeOut } );
+                };                
+                
+                if ( _self.useFilters )
+                {
+                   TweenMax.set( _self.bkg, { '-webkit-filter': 'brightness(0)', filter:'brightness(0)' } );
+                    TweenMax.set( _self.fore, { '-webkit-filter': 'brightness(0)', filter:'brightness(0)' } );
+                    TweenMax.set( _self.logo, { '-webkit-filter': 'brightness(0)', filter:'brightness(0)' } );
+                    //TweenMax.to({}, _self.fadeTimeIn, { onUpdate:_setContrast, onUpdateParams: ['{self}', _self.bkg, 4, 'fadeIn' ], delay:.25, ease:Quint.easeOut });
+                    TweenMax.to({}, _self.fadeTimeIn, { onUpdate:_setBrightness, onUpdateParams: ['{self}', _self.bkg, 'fadeIn' ], delay:.5,  ease:Quint.easeOut });
+                    TweenMax.to({}, _self.fadeTimeIn, { onUpdate:_setBrightness, onUpdateParams: ['{self}', _self.fore, 'fadeIn' ], delay:.5,  ease:Quint.easeOut }); 
+                    TweenMax.to({}, _self.fadeTimeIn, { onUpdate:_setBrightness, onUpdateParams: ['{self}', _self.logo, 'fadeIn' ], delay:.5,  ease:Quint.easeOut }); 
+                } 
+                else
+                {
+                    TweenMax.set( _self.bkg, { autoAlpha:0 } );
+                    TweenMax.to(_self.bkg, _self.fadeTimeIn, { autoAlpha:1, delay:.25, ease:Quint.easeOut }); 
+                }; 
+                
+                if (!_nextSceneFunc)TweenMax.delayedCall( _self.transitionTimeIn, function(){ _nextSceneFunc = gui.add( scene, 'nextScene' ) } );
+                    
+                
+                //this.movement = gui.add( scene, 'nextScene' );
+                
+            };
+            
+            _startLag = function()
+            {
+                _delayLag = false;   
+            }
+            
+            this.nextScene = function()
+            {
+               this.removeScene();
+                
+                if ( this.sceneNum == 1 )
+                {
+                    this.scene = $('#scene-2');
+                    this.sceneNum = 2;
+                    if ( _self.animationOption == 'zoomOut' )
+                    {
+                        TweenMax.set( $('#scene-2'), { z:1 } );
+                        TweenMax.set( $('#scene-1'), { z:0 } );
+                    }
+                    else if ( _self.animationOption == 'zoomIn' ) 
+                    {
+                       TweenMax.set( $('#scene-1'), { z:1 } );
+                        TweenMax.set( $('#scene-2'), { z:0 } ); 
+                    }
+                }
+                else if ( this.sceneNum == 2 )
+                {
+                    this.scene = $('#scene-1');
+                    this.sceneNum = 1;
+                    if ( _self.animationOption == 'zoomOut' )
+                    {
+                        TweenMax.set( $('#scene-1'), { z:1 } )
+                        TweenMax.set( $('#scene-2'), { z:0 } )
+                    }
+                    else if ( _self.animationOption == 'zoomIn' ) 
+                    {
+                        TweenMax.set( $('#scene-2'), { z:1 } )
+                        TweenMax.set( $('#scene-1'), { z:0 } )
+                    }
+                }
+                TweenMax.delayedCall( this.fadeTimeOut * .5, _self.fireInitialTrans );
+                
+                //gui.remove( this.movement );
+               // this.movement = gui.add( scene, 'prevScene' );
+            }
+            
+            this.prevScene = function()
+            {
+               this.removeScene();
+                
+                this.scene = $('#scene-1');
+                TweenMax.set( this.scene, { autoAlpha:1 } )
+                this.sceneNum = 1;
+                this.fireInitialTrans();
+                
+                // gui.remove( this.movement );
+               // this.movement = gui.add( scene, 'nextScene' );
+            }
+            
+            this.loopGrit = function()
+            {
+                _gritCount++;
+                if (_gritCount == 10) _gritCount = 0;
+                if ( _self.loopTheGrit )
+                {
+                    if (_self.enableGrit)TweenMax.set( _self.grit, { delay:.02, x:getRandomInt(40) - 20, y:getRandomInt(40) - 20, backgroundPosition:'0 '+ _gritCount * -548 + 'px', autoAlpha:getRandomInt(5) * .05, onComplete:_self.loopGrit } )
+                    else TweenMax.set( _self.grit, { delay:.02, onComplete:_self.loopGrit  } )
+                }
+            }
+            
+            this.removeScene = function()
+            {
+                _delayLag = true; 
+                this.loopTheGrit = false;               
+                if ( this.animationOption == 'zoomOut' )
+                {
+                    TweenMax.to( this.bkg, this.transitionTimeOut, { z:-2050, ease:Quint.easeInOut } );
+                    TweenMax.to( this.logo, this.transitionTimeOut + .15, { z:-1500, ease:Quint.easeInOut } );
+                    TweenMax.to( this.fore, this.transitionTimeOut + .25, { z:-1000, ease:Quint.easeInOut } );
+                }
+                else if ( this.animationOption == 'zoomIn' )
+                {
+                    TweenMax.to( this.bkg, this.transitionTimeOut + .15, { z:50, ease:Quint.easeInOut } );
+                    TweenMax.to( this.logo, this.transitionTimeOut, { z:500,  ease:Quint.easeInOut } );
+                    TweenMax.to( this.fore, this.transitionTimeOut, { z:1100,  ease:Quint.easeInOut } );
+                }
+                else if (this.animationOption == 'horizontal3D')
+                {
+                    TweenMax.to( _self.bkg, _self.transitionTimeOut, { bezier:{values:[ { rotationY:45, x:2950, z:-2050 }]},   ease:Quint.easeInOut } );                    
+                    TweenMax.to( _self.grit, _self.transitionTimeOut, { bezier:{values:[{ rotationY:45, x:3000, z:-1550 }]}, ease:Quint.easeInOut } ); 
+                     TweenMax.to( _self.logo, _self.transitionTimeOut, { bezier:{values:[{ rotationY:45, x:3000, z:-1250 }]}, ease:Quint.easeInOut } ); 
+                   TweenMax.to( _self.fore, _self.transitionTimeOut, { bezier:{values:[ { rotationY:45, x:3050, z:-1050 }]},  ease:Quint.easeInOut } );
+                }
+                else if (this.animationOption == 'vertical3D')
+                {
+                   TweenMax.to( _self.bkg, _self.transitionTimeOut, { bezier:{values:[ { rotationX:45, y:-1950, z:-2050 }]},   ease:Quint.easeInOut } );                    
+                    TweenMax.to( _self.grit, _self.transitionTimeOut, { bezier:{values:[{ rotationX:45, y:-2000, z:-1550 }]}, ease:Quint.easeInOut } );
+                    TweenMax.to( _self.logo, _self.transitionTimeOut, { bezier:{values:[{ rotationX:45, y:-2000, z:-1250 }]}, ease:Quint.easeInOut } );
+                   TweenMax.to( _self.fore, _self.transitionTimeOut, { bezier:{values:[ { rotationX:45, y:-2050, z:-1050 }]},  ease:Quint.easeInOut } );
+                }
+                else if (this.animationOption == 'horizontal2D')
+                {
+                    TweenMax.to( _self.bkg, _self.transitionTimeOut, { x:w.width(), ease:Quint.easeInOut } );
+                    TweenMax.to( _self.grit, _self.transitionTimeOut + .15, { x:w.width(), ease:Quint.easeInOut } );
+                    TweenMax.to( _self.logo, _self.transitionTimeOut + .2, { x:w.width(), ease:Quint.easeInOut } );
+                    TweenMax.to( _self.fore, _self.transitionTimeOut + .25, { x:w.width(), ease:Quint.easeInOut } );
+                }
+                else if (this.animationOption == 'vertical2D')
+                {
+                    TweenMax.to( _self.bkg, _self.transitionTimeOut, { y:-w.height() * 1.5, ease:Quint.easeInOut } );
+                    TweenMax.to( _self.grit, _self.transitionTimeOut + .15, { y:-w.height() * 1.1, ease:Quint.easeInOut } );
+                    TweenMax.to( _self.logo, _self.transitionTimeOut + .2, { y:-w.height() * 1.1, ease:Quint.easeInOut } );
+                    TweenMax.to( _self.fore, _self.transitionTimeOut + .25, {  y:-w.height(), ease:Quint.easeInOut } );
+                };              
+                
+                if ( this.useFilters )
+                {
+                   TweenMax.to({}, this.fadeTimeOut, { onUpdate:_setBrightness, onUpdateParams: ['{self}', this.bkg, 'fadeOut' ],  ease:Quint.easeInOut });
+                    TweenMax.to({}, this.fadeTimeOut, { onUpdate:_setBrightness, onUpdateParams: ['{self}', this.fore, 'fadeOut' ],  ease:Quint.easeInOut });
+                    TweenMax.to({}, this.fadeTimeOut, { onUpdate:_setBrightness, onUpdateParams: ['{self}', this.logo, 'fadeOut' ],  ease:Quint.easeInOut });
+                } 
+                else
+                {
+                    TweenMax.set( this.bkg, { autoAlpha:0 } );
+                    TweenMax.to(this.bkg, this.fadeTimeOut, { autoAlpha:1, delay:.25, ease:Quint.easeOut }); 
+                };   
+                
+                TweenMax.set( this.scene, { delay:this.fadeTimeOut, visibility:'hidden' } )
+            }
+        
+            
+            
+            function _setContrast($tl, $el, $multi, $method) {
+                // convert timeline progress to a percentage
+                var $tlp;
+                if ( $method == 'fadeIn' ) $tlp = ($multi + 1) - ($tl.progress()*$multi);
+                else if ($method == 'fadeOut') $tlp = 1 + ($tl.progress() * $multi);
+               // console.log( $el, $tlp )
+                TweenMax.set($el,{ '-webkit-filter': 'contrast(' + $tlp + ')', filter: 'contrast(' + $tlp + ')' });
+            };
+
+            function _setBrightness($tl, $el, $method) {
+                // convert timeline progress to a percentage
+                var $tlp;
+                if ( $method == 'fadeIn' ) $tlp = ($tl.progress());
+                else if ( $method == 'fadeOut' ) $tlp = 1 - $tl.progress()
+                TweenMax.set($el,{ '-webkit-filter': 'brightness(' + $tlp + ')', filter: 'brightness(' + $tlp + ')' });
+            };
+
+            function _ticker()
+            {
+                 meter.tickStart();
+                if ( !_delayLag )
+                {
+                    TweenMax.to( _self.bkg, _self.driftLag, {  z:_self.bkgZ, rotationY:-_driftX * _self.bkgDrift, rotationX:-_driftY * (_self.bkgDrift * .5),  ease:Quint.easeOut } );
+                   TweenMax.to( _self.fore, _self.driftLag, {  z:_self.foregroundZ, x:-_driftX * _self.foreDrift, y:-_driftY * ( _self.foreDrift *.5),  ease:Quint.easeOut } );
+
+                    TweenMax.to( _self.grit, _self.driftLag, { z:_self.gritZ, x:-_driftX * _self.foreDrift, y:-_driftY * ( _self.foreDrift *.5),  ease:Quint.easeOut } );
+                    
+                    TweenMax.to( _self.logo, _self.driftLag, { z:_self.gritZ, x:-_driftX * (_self.foreDrift * .5), y:-_driftY * ( _self.foreDrift *.15),  ease:Quint.easeOut } );
+                    
+                    if (_self.enableCamera)
+                    {
+                        TweenMax.to( _self.foreSrc, 10, { x:_sceneX, y:_sceneY, z:_sceneZ, rotationY:_sceneRY, rotationX:_sceneRX  } );
+                        TweenMax.to( _self.bkgSrc, 10, { x:_sceneX, y:_sceneY, z:_sceneZ, rotationY:_sceneRY, rotationX:_sceneRX  } );
+                        TweenMax.to( _self.logoSrc, 10, { x:_sceneX, y:_sceneY, z:_sceneZ, rotationY:_sceneRY, rotationX:_sceneRX  } );
+                    }
+                }
+                
+                
+                meter.tick();
+                requestAnimationFrame(_ticker);   
+            };
+            
+            function _setRandomValue($set, $prop)
+            {
+               var $t = getRandomInt( _self.cameraJitters ) * .01 + .5;
+               $set = getRandomInt( _self.cameraMovement ) - (_self.cameraMovement * .5);  
+               $blurSet = getRandomInt( _self.cameraMovement )    
+                
+                if ( $prop == 'x' ) _sceneX = $set;
+                if ( $prop == 'y' ) _sceneY = $set;
+                if ( $prop == 'z' )  _sceneZ = $set;
+                if ( $prop == 'rx' ) _sceneRX = $set;
+                if ( $prop == 'ry' ) _sceneRY = $set;
+                //if ($prop == 'blur' ) _sceneBlur = $blurSet * .1;
+                
+                TweenMax.delayedCall($t, function(){ _setRandomValue( $set, $prop ) })
+                   
+            }
+            
+            function _setParaValues(e)
+            {
+                 _driftX = (w.width() * .5) - e.pageX;
+                 _driftY =  (w.height() * .5) - e.pageY;
+            }
+            
+            function _setAccelValues(e)
+            {
+                var $accel = e.accelerationIncludingGravity;
+                var $ort = window.orientation;
+                var $x = 350;
+                var $y = 250;
+                var $multi = 5;
+                var $yOffset = $y * $multi;
+                if ( $ort == 0 )
+                {
+                    _driftX = (Math.round($accel.x) * -$x);
+                    _driftY =(Math.round($accel.y) * $y + $yOffset)
+                }
+                else if ( $ort == 90 )
+                {
+                   _driftY = (Math.round($accel.x) * $y + $yOffset);
+                    _driftX =(Math.round($accel.y) * $x)
+                }
+                else if ( $ort == 180 )
+                {
+                    _driftX = (Math.round($accel.x) * $x);
+                    _driftY =(Math.round($accel.y) * $y - $yOffset)
+                }
+                else if ( $ort == -90 )
+                {
+                    _driftY = (Math.round($accel.x) * -$y + $yOffset);
+                    _driftX =(Math.round($accel.y) * -$x)
+                }
+                $('.accel').text('$ort: ' + $ort + ' _driftX: ' + _driftX + ' _driftY ' + _driftY)
+            }
+            
+            
+        }
+        
+        gui.add( scene, 'transitionTimeIn', 0, 5 ).step(.1);
+         gui.add( scene, 'fadeTimeIn', 0, 5 ).step(.1);
+        gui.add( scene, 'transitionTimeOut', 0, 5 ).step(.1);        
+        gui.add( scene, 'fadeTimeOut', 0, 5 ).step(.1);
+        gui.add( scene, 'bkgDrift', 0, .025  );
+        gui.add( scene, 'foreDrift', 0, .2  );
+        gui.add(scene, 'driftLag', 0, 5);
+        gui.add(scene, 'cameraMovement', 10, 150);
+        gui.add(scene, 'cameraJitters', 0, 500);
+        gui.add( scene, 'enableCamera'  );
+        gui.add( scene, 'useFilters'  );
+        gui.add( scene, 'enableGrit'  );
+        gui.add(scene, 'bkgZ', -2000, 0);
+        gui.add(scene, 'gritZ', -1000, 0);
+        gui.add(scene, 'foregroundZ', -500, 0);
+        gui.add( scene, 'animationOption', [ 'zoomOut', 'zoomIn', 'horizontal3D', 'vertical3D', 'horizontal2D', 'vertical2D' ] )
+		gui.add( scene, 'fireInitialTrans' );
+        
+		function getRandomInt( $n )
+		{
+			return Math.floor((Math.random()*$n)+1);	
+		}	
+        
+        // Returns the device. I forget where this is from, sorry.  I didn't do it.
+        function getDevice()
+	    {
+		  var check = false;
+		  (function(a){if(/(android|ipad|playbook|silk|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
+		return check;
+	};
+		
+		
+	
+	</script>
+	
+	<!-- END JS
+  ================================================== -->
+	
+</body>
+</html>
